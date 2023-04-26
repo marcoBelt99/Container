@@ -1,0 +1,42 @@
+# In questo file vado a gestire la configurazione del mio servizio
+version: "3"
+
+# Mi vado a gestire i servizi: server web, server database
+services:
+
+  # Servizio web
+  web:
+    # Recupero l'immagine del servizio da hub.docker.com (https://dockerfile.readthedocs.io/en/latest/content/DockerImages/dockerfiles/php-apache.html)
+    image: webdevops/php-apache:8.2-alpine
+    # Porte da esporre:
+    ports:
+      # metto sulla porta 4500 quello che il container mette nella porta 80
+      # vuol dire che una volta dato il comando docker-compose up devo andare in localhost:4500
+      - "4500:80"
+    # Volumi
+    volumes:
+      # mappo la cartella locale www dentro alla cartella /app del mio container
+      # Con questo meccanismo io posso continuare a sviluppare, modificando il mio codice aggiornando la pagina
+      - ./www:/app
+
+  # Servizio di database con MySQL
+  db:
+    # Recupero l'immagine da quella ufficiale di MySQL
+    image: mysql
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      # Come environment dai la password di root che e' example
+      MYSQL_ROOT_PASSWORD: example
+
+  # Servizio di DBMS grafico
+  phpmyadmin:
+    image: phpmyadmin
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    ports:
+    # sulla mia porta 8088 giro la sua porta 80
+      - "8088:80"
+

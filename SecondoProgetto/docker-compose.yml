@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+# servizio web, che ho costruito con flask
+  web:
+    # costruisce l'applicazione
+    build: .
+    # gestione delle porte
+    ports:
+      # prendo la porta 8000 sull'host e la associo alla porta 5000 del container (creo un collegamento verso fuori, ci posso accedere da fuori)
+      - 8000:5000
+    # volumi: prendi la cartella corrente e la mappi su /code (quella in cui c'e' all'interno il codice)
+    volumes:
+      - .:/code
+  # gestione di redis (in app.py quando ho fatto redis.Redis(host="redis", ...) "redis" e' il nome che ci metto qui sotto)
+  # quindi, il mio container prende all'interno di docker quell'indirizzo: avra' quel nome all'interno del container (potrò farci riferimento utilizzando quel nome)
+  redis:
+    # su hub.docker.com cerco redis e la versione dell'immagine che mi serve (uso per esempio la versione con alpine)
+    image: "redis:alpine"
+# alla fine da terminale eseguo: docker compose up
